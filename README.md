@@ -1,4 +1,4 @@
-# Medical Bot Hackathon Repository
+# CareCompanion Repository
 - Welcome to the Medical Bot Hackathon repository! 🏥🤖 This project aims to develop a cutting-edge medical chatbot that assists users in identifying health issues, providing guidance, and suggesting suitable healthcare options.
 
 # 🚀 Key Features:

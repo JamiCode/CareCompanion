@@ -1,3 +1,8 @@
 virt/
+node_modules/
+backend/__pycache__
 node_modules
 .next
+*.db
+
+

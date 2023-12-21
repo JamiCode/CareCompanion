@@ -9,12 +9,16 @@ import jwt
 import secrets
 import fastapi
 import fastapi.security as security
+import openai
+from openai import OpenAI
 
 
+
+
+
+JWT_SECRET = "jackal"
 oauth2schema = security.OAuth2PasswordBearer(tokenUrl='/api/token')
 
-
-JWT_SECRET = secrets.token_urlsafe(32) 
 
 def create_database():
     return database.Base.metadata.create_all(bind=database.engine)
@@ -52,6 +56,7 @@ async def create_user(db:Session,user: schemas.UserCreate):
     return user_obj
 
 
+
 async def authenticate_user(email: str, password: str, db: _orm.Session):
     user = await get_user_by_email(db=db, email=email)
 
@@ -71,15 +76,50 @@ async def create_token(user: models.User):
     return dict(access_token=token, token_type="bearer")
 
 async def get_current_user(
+
     db: _orm.Session = fastapi.Depends(get_db),
-    token: str = fastapi.Depends(oauth2schema),  # Assuming you have previously defined oauth2_scheme
+    token: str = fastapi.Depends(oauth2schema), 
 ):
     try:
+    
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         user = db.query(models.User).get(payload['id'])
     except:
-        raise fastapi.HTTPException(status_code=401, detail="Invalid email or password")
+        raise fastapi.HTTPException(status_code=401, detail="Invalid  credentials")
     return schemas.User.model_validate(user)
 
+
+# A custom dependency that checks for token
+async def authenticate_token(
+        db: _orm.Session = fastapi.Depends(get_db),
+        token:str= Depends(oauth2schema),
+        ):
+    try:
+        decoded_payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        user = db.query(models.User).get(decoded_payload["id"])
+    except:
+        raise fastapi.HTTPException(status_code=401, detail="Invalid credentials")
+
+    return token
+
+#creates conversation
+async def create_conversation_service(
+        user:models.User,
+        conversation:schemas.ConversationCreate,
+        db:_orm.Session,
+    ):
+
+        new_conversation = models.Conversation(
+            title=conversation.title,
+            user_id=user.id
+        )
+
+        db.add(new_conversation)
+        db.commit()
+        db.refresh(new_conversation)
+        return new_conversation
+
+
 if __name__ == "__main__":
+
     create_database()

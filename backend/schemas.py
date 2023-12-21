@@ -18,3 +18,7 @@ class User(_UserBase):
 
     class Config:
         from_attributes = True
+
+# Pydantic model for creating a conversation
+class ConversationCreate(_pydantic.BaseModel):
+    title: str

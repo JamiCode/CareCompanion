@@ -1,9 +1,10 @@
 import MainLayout from "@/app/layout";
+import Chart from "@/components/Chat";
 
 const home = () => {
   return (
     <MainLayout>
-      <h1 className="text-meta-7">hello</h1>
+      <Chart />
     </MainLayout>
   );
 };

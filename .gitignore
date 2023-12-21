@@ -1,1 +1,6 @@
 virt/
+<<<<<<< Updated upstream
+=======
+node_modules
+backend/__pycache__
+>>>>>>> Stashed changes

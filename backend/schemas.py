@@ -22,3 +22,8 @@ class User(_UserBase):
 # Pydantic model for creating a conversation
 class ConversationCreate(_pydantic.BaseModel):
     title: str
+
+class MessagePayload(BaseModel):
+    conversation_id: int
+    text_content: str
+    author_id: int

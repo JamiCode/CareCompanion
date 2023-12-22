@@ -1,5 +1,7 @@
 from typing import Union
 from fastapi import FastAPI
+from fastapi.websockets import WebSocket
+from fastapi.exceptions import WebSocketException
 import fastapi as _fastapi
 import fastapi.security as _security
 import services as _services
@@ -94,3 +96,28 @@ async def create_conversation(
         "message": "Conversation created successfully"
         }
 
+
+@app.websocket("/chat")
+async def chat_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    while True:
+        try:
+            # Receive JSON data containing the message payload
+            data = await websocket.receive_json()
+            message_payload = _schemas.MessagePayload(**data)
+
+            # Pass the received message text to the AI function (mocked for now)
+            ai_response = await get_ai_response(message_payload.text_content)
+            
+            # Prepare the AI's response payload
+            response_payload = {
+                "conversation_id": message_payload.conversation_id,
+                "text_content": ai_response,
+                "author_id": 123  #x Replace with the actual author ID or logic to identify the author
+            }
+
+            # Send the AI's response back to the client via WebSocket
+            await websocket.send_text(response_payload)
+        except WebSocketDisconnect:
+            break  # Break the loop if WebSocket is disconnected

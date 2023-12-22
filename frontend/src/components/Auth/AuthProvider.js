@@ -15,15 +15,15 @@ export const AuthProvider = ({ children }) => {
 
   if (typeof window !== "undefined") {
     const router = useRouter();
-
     sessionStorageAccessToken = sessionStorage.getItem("accessToken") || "";
 
     useEffect(() => {
-      if (!auth) {
-        const url = sessionStorageAccessToken ? "/" : "/auth";
-        router.push(url);
+      if (!sessionStorageAccessToken) {
+        router.push("/auth");
+      } else {
+        setAuth(true);
       }
-    }, [auth]);
+    }, [sessionStorageAccessToken]);
   }
 
   return (

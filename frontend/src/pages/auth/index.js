@@ -19,7 +19,7 @@ const auth = () => {
 
       if (response) {
         const data = await response.json();
-        console.log("data", data);
+
         if (data.access_token) {
           sessionStorage.setItem("accessToken", data.access_token);
           router.push("/");

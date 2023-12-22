@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3005",
+    "dev": "next dev -p 3005 --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "4.41.3",
     "next": "14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"

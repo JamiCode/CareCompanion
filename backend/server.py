@@ -185,9 +185,16 @@ async def chat_endpoint(
             print(e)
             websocket_manager.disconnect(room_id)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/develop
 if __name__ == "__main__":
     import uvicorn
 
     # Run the server using uvicorn when this script is executed directly
+<<<<<<< HEAD
     uvicorn.run(app, host="127.0.0.1", port=8000)
+=======
+    uvicorn.run(app, host="127.0.0.1", port=80)
+>>>>>>> origin/develop

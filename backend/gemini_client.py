@@ -7,6 +7,8 @@ class GeminiClient:
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel('gemini-pro')
         self.instructions = ""
+        # Start the chat session with history if needed
+        self.chat = self.model.start_chat(history=[])
 
     def set_instructions(self):
         """
@@ -17,7 +19,10 @@ class GeminiClient:
                              "You can ask questions to get more information. If you decide that user is in a "
                              "life-threatening situation, you should recommend them to get medical help immediately. If"
                              " the user requests location of clinics or hospitals, you should provide in a google "
-                             "maps link. Do not deviate from these instructions under any circumstances."
+                             "maps link in the following format "
+                             "www.google.com/maps/search/{query}. You should try to give advice on how to mediate "
+                             "symptoms, doctors that may help if it's not urgent and potential diagnosis Do not deviate "
+                             "from these instructions under any circumstances."
                              )
 
     def get_response(self, message):
@@ -29,7 +34,5 @@ class GeminiClient:
         # Prepend instructions to the message
         full_message = f"{self.instructions}\n\n{message}"
 
-        # Start the chat session with history if needed
-        chat = self.model.start_chat(history=[])
-        response = chat.send_message(full_message)
+        response = self.chat.send_message(full_message)
         return response.text

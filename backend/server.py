@@ -20,7 +20,8 @@ app = FastAPI()
 websocket_manager = ClientConnectionManager()
 
 # Initialize the client with the API key
-gemini_client = GeminiClient('API_KEY_HERE')
+temporary_key = 'AIzaSyCdUu2kedN8CtuJyGiNwkmVzTTc-J8suaI'
+gemini_client = GeminiClient(temporary_key)
 
 
 # User authentication endpoints

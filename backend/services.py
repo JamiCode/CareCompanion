@@ -155,7 +155,7 @@ async def check_conversation_exists(db: Session, conversation_id: str) -> bool:
     conversation_exists = db.query(models.Conversation.id).filter_by(id=conversation_id).scalar() is not None
     return conversation_exists
 
-def get_user_conversations(db: Session, user_id: int):
+async def get_user_conversations(db: Session, user_id: int):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         return None  # Or handle the case when the user doesn't exist

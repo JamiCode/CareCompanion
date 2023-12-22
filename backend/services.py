@@ -155,8 +155,34 @@ async def check_conversation_exists(db: Session, conversation_id: str) -> bool:
     conversation_exists = db.query(models.Conversation.id).filter_by(id=conversation_id).scalar() is not None
     return conversation_exists
 
+def get_user_conversations(db: Session, user_id: int):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        return None  # Or handle the case when the user doesn't exist
+
+    user_conversations = db.query(models.Conversation).filter(models.Conversation.user_id == user_id).all()
+    return user_conversations
+
+async def get_conversation_by_id(db: Session, conversation_id: int):
+    # Retrieve the conversation by its ID
+    conversation = db.query(models.Conversation).filter(models.Conversation.id == conversation_id).first()
+
+    if not conversation:
+        return None  # Or handle the case when the conversation doesn't exist
+
+    return conversation
 
 
+async def get_all_messages_from_conversation(db: Session, conversation_id: str):
+    # Retrieve the conversation by its ID
+    conversation = db.query(models.Conversation).filter(models.Conversation.id == conversation_id).first()
+
+    if not conversation:
+        return None  # Or handle the case when the conversation doesn't exist
+
+    # Get all messages related to the conversation
+    messages = db.query(models.Message).filter(models.Message.conversation_id == conversation_id).all()
+    return messages
 if __name__ == "__main__":
 
     create_database()

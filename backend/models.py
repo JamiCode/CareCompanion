@@ -61,4 +61,3 @@ class Message(database.Base):
     def __repr__(self) -> str:
         return f"Message: {self.text}"
 
-

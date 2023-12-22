@@ -74,78 +74,108 @@ async def create_conversation(
         }
 
 
+#Endpoint to get all conversation user has
+
+@app.get('/api/convos/{user_id}')
+async def get_user_conversation(
+    user_id:int,
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    token: str = _fastapi.Depends(_services.authenticate_token),
+    ):
+    """ Get al the user conversations"""
+    user = await _services.get_current_user(db, token)
+    user_conversations = await _services.get_user_conversations(db, user.id)
+    if not user:
+        raise  _fastapi.HTTPException(status_code=404, detail="Conversation not found")
+    return user_conversations
+
+
+@app.get('/api/chat_history/{room_id}')
+async def get_message_from_conversation(
+    room_id:str,
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    token: str = _fastapi.Depends(_services.authenticate_token),
+    ):
+
+    """ Get all the messages from  conversations"""
+    conversation = await _services.get_conversation_by_id(db, room_id)
+
+    if not conversation:
+        _fastapi.HTTPException(status_code=404, detail="Conversation not found")
+    messages = await _services.get_all_messages_from_conversation(db, conversation.id)
+    message_payload_schema = [_schemas.MessageSchema(**message.__dict__) for message in messages]
+    
+    return message_payload_schema
+
+
+
 @app.websocket("/chat/{room_id}/{token}")
 async def chat_endpoint(
-    room_id:int,
+    room_id:str,
     token:str,
     websocket:WebSocket,
     db:_orm.Session = _fastapi.Depends(_services.get_db)
     ):
-    print('hello')
     await websocket.accept()
     user = await _services.verify_socket_connection(token, db=db)
-    conversation = _services.check_conversation_exists(db, room_id)
-    print(conversation)
-
-    await websocket.accept()
-    await websocket_manager.connect(conversation.id, websocket)
+    conversation = await _services.check_conversation_exists(db, room_id)
+    if not conversation:
+        await websocket.send_json({"message":'conversation does not exist'})
+    await websocket_manager.connect(room_id, websocket)
 
     while True:
         try:
             # Receive JSON data containing the message payload
-            data = await websocket.receive_json()
-            message_payload = _schemas.MessagePayload(**data)
-            websocket_conn  = websocket_manager.active_connections[conversation.id]
+            data = await websocket.receive_text()
+            websocket_conn  = websocket_manager.active_connections[room_id]
 
-            await websocket_conn.send_json()
+            await websocket_conn.send_json({
+                "text_content": data,
+                "is_bot_message":False,
+            })
 
-        
+    
+            # Mock bot response
+            bot_response = {
+                "text_content": "This is a response from the bot.",
+                "is_bot_message":True,
+            }
+            # Send the AI's response back to the client via WebSocket
+            await websocket_conn.send_json(bot_response)
+
             new_message = models.Message(
-                text_content=message_payload.text_content,
+                text_content=data,
                 author_id=user.id,
-                conversation_id=conversation.id
+                conversation_id=room_id
             )
             db.add(new_message)
             db.commit()
 
-            # Mock bot response
-            bot_response = {
-                "conversation_id": conversation.id,
-                "text_content": "This is a response from the bot.",
-            }
-
-            # add the message as well
+             # add the message record in db
             bot_message = models.Message(
                 text_content=bot_response["text_content"],
-                conversation_id=bot_response["conversation_id"],
+                conversation_id=room_id,
                 is_bot_message=True,
                 
                 )
             db.add(bot_message)
             db.commit()
             
-        
 
-            # Send the AI's response back to the client via WebSocket
-            await websocket_conn.send_json(bot_response)
         except websockets.exceptions.ConnectionClosedOK as e:
-            websocket_manager.disconnect(user.id)
+            websocket_manager.disconnect(room_id)
          
         except websockets.exceptions.ConnectionClosedError as error:
-            websocket_manager.disconnect(user.id)
+            websocket_manager.disconnect(room_id)
         except json.decoder.JSONDecodeError:
             # if user does not put in the format of json
-            websocket_manager.disconnect(user.id)
+            websocket_manager.disconnect(room_id)
             raise WebSocketException(code=_fastapi.status.WS_1008_POLICY_VIOLATION, reason="Unable to parse JSON")
         except WebSocketDisconnect:
-            websocket_manager.disconnect(user.id)
+            websocket_manager.disconnect(room_id)
         
         except Exception as e:
             print(e)
-            websocket_manager.disconnect(user.id)
-        finally:
-            break
-
-
+            websocket_manager.disconnect(room_id)
 
            

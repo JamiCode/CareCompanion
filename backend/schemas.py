@@ -1,5 +1,6 @@
 import datetime as _dt
 import pydantic as _pydantic
+from typing import Optional
 
 
 class _UserBase(_pydantic.BaseModel):
@@ -18,3 +19,19 @@ class User(_UserBase):
 
     class Config:
         from_attributes = True
+
+# Pydantic model for creating a conversation
+class ConversationCreate(_pydantic.BaseModel):
+    title: str
+
+class MessagePayload(_pydantic.BaseModel):
+    text_content: str
+
+
+class MessageSchema(_pydantic.BaseModel):
+    id: int
+    text_content: str 
+    is_bot_message: bool
+
+    class Config:
+        orm_mode = True

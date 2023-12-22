@@ -13,15 +13,17 @@ import models
 import passlib.hash as _hash
 import websockets
 import json
-
+from gemini_client import GeminiClient
 
 
 app = FastAPI()
 websocket_manager = ClientConnectionManager()
 
+# Initialize the client with the API key
+gemini_client = GeminiClient('API_KEY_HERE')
+
 
 # User authentication endpoints
-
 @app.post("/api/users")
 async def create_user(
     user:_schemas.UserCreate, 
@@ -108,7 +110,6 @@ async def get_message_from_conversation(
     return message_payload_schema
 
 
-
 @app.websocket("/chat/{room_id}/{token}")
 async def chat_endpoint(
     room_id:str,
@@ -126,32 +127,38 @@ async def chat_endpoint(
     while True:
         try:
             # Receive JSON data containing the message payload
-            data = await websocket.receive_text()
-            websocket_conn  = websocket_manager.active_connections[room_id]
+            user_input = await websocket.receive_text()
+            websocket_conn = websocket_manager.active_connections[room_id]
 
             await websocket_conn.send_json({
-                "text_content": data,
-                "is_bot_message":False,
+                "text_content": user_input,
+                "is_bot_message": False,
             })
 
-    
-            # Mock bot response
-            bot_response = {
-                "text_content": "This is a response from the bot.",
-                "is_bot_message":True,
-            }
+            # Get the response from the Gemini API
+            try:
+                response = gemini_client.get_response(user_input)
+            except Exception as api_error:
+                print(f"Gemini API error: {api_error}")
+                # Handle API error (e.g., send a message back, log, etc.)
+                continue
+
             # Send the AI's response back to the client via WebSocket
+            bot_response = {
+                "text_content": response,
+                "is_bot_message": True,
+            }
             await websocket_conn.send_json(bot_response)
 
             new_message = models.Message(
-                text_content=data,
+                text_content=user_input,
                 author_id=user.id,
                 conversation_id=room_id
             )
             db.add(new_message)
             db.commit()
 
-             # add the message record in db
+            # add the message record in db
             bot_message = models.Message(
                 text_content=bot_response["text_content"],
                 conversation_id=room_id,
@@ -160,7 +167,6 @@ async def chat_endpoint(
                 )
             db.add(bot_message)
             db.commit()
-            
 
         except websockets.exceptions.ConnectionClosedOK as e:
             websocket_manager.disconnect(room_id)

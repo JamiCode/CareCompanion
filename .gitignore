@@ -1,8 +1,8 @@
 virt/
 node_modules/
-backend/__pycache__/
+__pycache__/
+venv/
 node_modules/
 .next
+.idea/
 sql_app.db
-
-

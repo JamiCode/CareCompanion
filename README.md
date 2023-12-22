@@ -1,5 +1,7 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/bd4708a9-67ba-42a7-84cd-dc8a0149a8d0/deploy-status)](https://app.netlify.com/sites/carecompanion/deploys)
 
+[https://carecompanion.netlify.app/](https://carecompanion.netlify.app/)
+
 # CareCompanion Repository
 
 - Welcome to the Medical Bot Hackathon repository! 🏥🤖 This project aims to develop a cutting-edge medical chatbot that assists users in identifying health issues, providing guidance, and suggesting suitable healthcare options.

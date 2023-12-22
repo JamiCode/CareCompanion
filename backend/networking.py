@@ -24,17 +24,15 @@ class ChatHistoryConnectionManager:
 class ClientConnectionManager:
     """ Tracks overall websocket connection"""
     def __init__(self):
-        self.active_connections: Dict[int, List[WebSocket]] = {}
+        self.active_connections: Dict[int, WebSocket] = {}
     
-    async def connect(self, user_id:int, websocket:WebSocket):
-        if user_id in self.active_connections:
-            print("User is already connected")
-            await websocket.accept()
-        else:
-            print("Connected to the server", user_id)
-            self.active_connections[user_id] = websocket
-    def disconnect(self, user_id: int, websocket: WebSocket):
-        if user_id in self.active_connections:
-            self.active_connections.pop(user_id)
+    async def connect(self, conversation_id:int, websocket):
+        if not conversation_id in self.active_connections.keys():
+            self.active_connections[conversation_id] = websocket
+            
+
+    def disconnect(self, conversation_id: int):
+        if conversation_id in self.active_connections:
+            self.active_connections.pop(conversation_id)
 
 

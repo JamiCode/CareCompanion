@@ -2,6 +2,8 @@ from typing import Union
 from fastapi import FastAPI
 from fastapi.websockets import WebSocket
 from fastapi.exceptions import WebSocketException
+from fastapi import WebSocket, WebSocketDisconnect
+from networking import ClientConnectionManager
 import fastapi as _fastapi
 import fastapi.security as _security
 import services as _services
@@ -9,10 +11,13 @@ import schemas as _schemas
 import sqlalchemy.orm as _orm
 import models
 import passlib.hash as _hash
+import websockets
+import json
 
 
 
 app = FastAPI()
+websocket_manager = ClientConnectionManager()
 
 
 # User authentication endpoints
@@ -28,33 +33,6 @@ async def create_user(
         raise _fastapi.HTTPException(status_code=400, detail="Email already in use")
     return await _services.create_user(db, user)
 
-@app.get("/api/create_bot_user/")
-def create_bot_user(
-    db: _orm.Session = _fastapi.Depends(_services.get_db)
-    ):
-    """Creates bot user"""
-    bot_user = db.query(models.User).filter(models.User.email == "bot@example.com").first()
-
-    if bot_user is None:
-    # Bot user doesn't exist, create a new one
-        bot_user = models.User(
-        email="bot@example.com",
-        first_name="MediCare",
-        last_name="Bot",
-        hashed_password=_hash.bcrypt.hash("medicarebot1234"),
-        is_bot=True,
-        )
-
-        # Add the bot user to the session and commit the changes
-        db.add(bot_user)
-        db.commit()
-        db.add(bot_user)
-        db.commit()
-        db.refresh(bot_user)  # Refresh to get the updated user object
-
-        return {"message": "Bot user created successfully"}
-
-    return {"message": "Bot user already exists"}
 
 
 
@@ -88,7 +66,6 @@ async def create_conversation(
     ):
     """Endpoint used to create a conversation """
     user = await _services.get_current_user(db, token)
-    print(user,2)
     convo = await _services.create_conversation_service(user,conversation, db)
     return {
         "conversation_id":convo.id, 
@@ -97,27 +74,78 @@ async def create_conversation(
         }
 
 
-@app.websocket("/chat")
-async def chat_endpoint(websocket: WebSocket):
+@app.websocket("/chat/{room_id}/{token}")
+async def chat_endpoint(
+    room_id:int,
+    token:str,
+    websocket:WebSocket,
+    db:_orm.Session = _fastapi.Depends(_services.get_db)
+    ):
+    print('hello')
     await websocket.accept()
+    user = await _services.verify_socket_connection(token, db=db)
+    conversation = _services.check_conversation_exists(db, room_id)
+    print(conversation)
+
+    await websocket.accept()
+    await websocket_manager.connect(conversation.id, websocket)
 
     while True:
         try:
             # Receive JSON data containing the message payload
             data = await websocket.receive_json()
             message_payload = _schemas.MessagePayload(**data)
+            websocket_conn  = websocket_manager.active_connections[conversation.id]
 
-            # Pass the received message text to the AI function (mocked for now)
-            ai_response = await get_ai_response(message_payload.text_content)
-            
-            # Prepare the AI's response payload
-            response_payload = {
-                "conversation_id": message_payload.conversation_id,
-                "text_content": ai_response,
-                "author_id": 123  #x Replace with the actual author ID or logic to identify the author
+            await websocket_conn.send_json()
+
+        
+            new_message = models.Message(
+                text_content=message_payload.text_content,
+                author_id=user.id,
+                conversation_id=conversation.id
+            )
+            db.add(new_message)
+            db.commit()
+
+            # Mock bot response
+            bot_response = {
+                "conversation_id": conversation.id,
+                "text_content": "This is a response from the bot.",
             }
 
+            # add the message as well
+            bot_message = models.Message(
+                text_content=bot_response["text_content"],
+                conversation_id=bot_response["conversation_id"],
+                is_bot_message=True,
+                
+                )
+            db.add(bot_message)
+            db.commit()
+            
+        
+
             # Send the AI's response back to the client via WebSocket
-            await websocket.send_text(response_payload)
+            await websocket_conn.send_json(bot_response)
+        except websockets.exceptions.ConnectionClosedOK as e:
+            websocket_manager.disconnect(user.id)
+         
+        except websockets.exceptions.ConnectionClosedError as error:
+            websocket_manager.disconnect(user.id)
+        except json.decoder.JSONDecodeError:
+            # if user does not put in the format of json
+            websocket_manager.disconnect(user.id)
+            raise WebSocketException(code=_fastapi.status.WS_1008_POLICY_VIOLATION, reason="Unable to parse JSON")
         except WebSocketDisconnect:
-            break  # Break the loop if WebSocket is disconnected
+            websocket_manager.disconnect(user.id)
+        
+        except Exception as e:
+            print(e)
+            websocket_manager.disconnect(user.id)
+        finally:
+            break
+
+
+
+           

@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.exceptions import WebSocketException
+from fastapi import WebSocket
 import models
 import schemas
 import database
@@ -9,8 +11,8 @@ import jwt
 import secrets
 import fastapi
 import fastapi.security as security
-import openai
-from openai import OpenAI
+
+
 
 
 
@@ -118,6 +120,41 @@ async def create_conversation_service(
         db.commit()
         db.refresh(new_conversation)
         return new_conversation
+
+async def get_token(websocket:WebSocket):
+    token_1 = websocket.headers.get("Authorization")
+    if token_1 is None:
+        #if token is None
+        raise WebSocketException(code=fastapi.status.WS_1008_POLICY_VIOLATION, reason="Token not found in header")
+    token = token = token_1.split("Bearer ")[-1]
+  
+    return token
+
+async def verify_socket_connection(
+        token,
+        db: _orm.Session = fastapi.Depends(get_db),
+        ):
+    #getting informatino from token
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms="HS256")
+        user = db.query(models.User).get(payload['id'])
+        print(user, 0)
+    
+        if user:
+            return user
+        else:
+            raise WebSocketException(code=fastapi.status.WS_1008_POLICY_VIOLATION, reason="Token information not found")
+
+    except:
+        raise WebSocketException(code=fastapi.status.WS_1008_POLICY_VIOLATION, reason="Invalid token")
+
+async def check_conversation_exists(db: Session, conversation_id: str) -> bool:
+    """
+    Function to check if a conversation with a specific conversation_id exists in the database.
+    """
+    conversation_exists = db.query(models.Conversation.id).filter_by(id=conversation_id).scalar() is not None
+    return conversation_exists
+
 
 
 if __name__ == "__main__":

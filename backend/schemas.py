@@ -23,7 +23,5 @@ class User(_UserBase):
 class ConversationCreate(_pydantic.BaseModel):
     title: str
 
-class MessagePayload(BaseModel):
-    conversation_id: int
+class MessagePayload(_pydantic.BaseModel):
     text_content: str
-    author_id: int

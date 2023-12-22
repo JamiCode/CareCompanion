@@ -6,11 +6,14 @@ import { useRouter } from "next/router";
 export const AuthContext = createContext({
   auth: {},
   setAuth: () => {},
+  user: {},
+  token: "",
 });
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState();
   const [user, setUser] = useState();
+  const [token, setToken] = useState();
 
   if (typeof window !== "undefined") {
     const router = useRouter();
@@ -30,7 +33,10 @@ export const AuthProvider = ({ children }) => {
                 Authorization: `Bearer ${sessionStorageAccessToken}`,
               },
             });
-            setUser(response);
+            const data = await response.json();
+
+            setToken(sessionStorageAccessToken);
+            setUser(data);
 
             if (response.ok) {
               setAuth(true);
@@ -54,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, user }}>
+    <AuthContext.Provider value={{ auth, setAuth, user, token }}>
       {children}
     </AuthContext.Provider>
   );

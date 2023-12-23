@@ -3,8 +3,8 @@ import google.generativeai as genai
 
 def convert_messages_format(message):
     formatted_message = {
-            "role": "user" if not message["is_bot_message"] else "model",
-            "parts": [message["text_content"]]
+            "role": "user" if not message.is_bot_message else "model",
+            "parts": [message.text_content]
         }
     return formatted_message
 

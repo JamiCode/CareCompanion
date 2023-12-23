@@ -26,7 +26,7 @@ class ConversationCreate(_pydantic.BaseModel):
 
 class MessagePayload(_pydantic.BaseModel):
     text_content: str
-
+    
 
 class MessageSchema(_pydantic.BaseModel):
     id: int
@@ -35,3 +35,5 @@ class MessageSchema(_pydantic.BaseModel):
 
     class Config:
         orm_mode = True
+    def __getitem__(self, item):
+        return getattr(self, item, None)

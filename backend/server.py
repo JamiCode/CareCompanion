@@ -114,14 +114,13 @@ async def get_message_from_conversation(
 
     """ Get all the messages from  conversations"""
     conversation = await _services.get_conversation_by_id(db, room_id)
-    print(conversation)
-
-    gemini_client.set_chat_history(conversation)
 
     if not conversation:
         _fastapi.HTTPException(status_code=404, detail="Conversation not found")
     messages = await _services.get_all_messages_from_conversation(db, conversation.id)
     message_payload_schema = [_schemas.MessageSchema(**message.__dict__) for message in messages]
+
+    gemini_client.set_chat_history(messages)
     
     return message_payload_schema
 

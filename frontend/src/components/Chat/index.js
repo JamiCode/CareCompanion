@@ -31,8 +31,8 @@ const chart = () => {
 
       if (text) {
         const newChat = {
-          id: messages.length,
-          title: text,
+          id: messages.length + 1,
+          title: text_content,
           type: "request",
         };
 
@@ -56,6 +56,7 @@ const chart = () => {
     });
 
     const data = await response.json();
+    setMessages(data);
     console.log("messages:::::", data);
   }
 
@@ -116,7 +117,7 @@ const chart = () => {
               <div
                 className={
                   "flex items-end " +
-                  (message.type === "request" ? "justify-end" : "")
+                  (message.is_bot_message ? "justify-end" : "")
                 }
               >
                 <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
@@ -124,12 +125,10 @@ const chart = () => {
                     <span
                       className={
                         "px-4 py-2 rounded-lg inline-block rounded-bl-none text-gray-600 " +
-                        (message.type === "request"
-                          ? "bg-blue-600"
-                          : "bg-gray-300")
+                        (message.is_bot_message ? "bg-blue-600" : "bg-gray-300")
                       }
                     >
-                      {message.title}
+                      {message.text_content}
                     </span>
                   </div>
                 </div>

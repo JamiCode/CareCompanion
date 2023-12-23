@@ -14,11 +14,15 @@ const chart = () => {
 
   const router = useRouter();
   const { id } = router.query;
-  console.log("id", id);
+
   useEffect(() => {
-    console.log("mounted", id);
     getMessages();
   }, []);
+
+  useEffect(() => {
+    getMessages();
+    handleClickChangeSocketUrl(generateSocketUrl());
+  }, [id]);
 
   function handleEnter(event) {
     if (event.key === "Enter") {
@@ -66,9 +70,11 @@ const chart = () => {
   }, [messages]);
 
   // Websockets
-  const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8000/api/chat/${id}/${authContext.token}`
-  );
+  const generateSocketUrl = () =>
+    `ws://localhost:8000/api/chat/${id}/${authContext.token}`;
+
+  const [socketUrl, setSocketUrl] = useState(generateSocketUrl());
+
   const [messageHistory, setMessageHistory] = useState([]);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
@@ -80,7 +86,7 @@ const chart = () => {
   }, [lastMessage, setMessageHistory]);
 
   const handleClickChangeSocketUrl = useCallback(
-    () => setSocketUrl("wss://demos.kaazing.com/echo"),
+    (newUrl) => setSocketUrl(newUrl),
     []
   );
 

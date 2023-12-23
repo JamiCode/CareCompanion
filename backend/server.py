@@ -1,6 +1,4 @@
-from typing import Union
 from fastapi import FastAPI
-from fastapi.websockets import WebSocket
 from fastapi.exceptions import WebSocketException
 from fastapi import WebSocket, WebSocketDisconnect
 from networking import ClientConnectionManager
@@ -10,14 +8,13 @@ import services as _services
 import schemas as _schemas
 import sqlalchemy.orm as _orm
 import models
-import passlib.hash as _hash
 import websockets
 import json
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 from gemini_client import GeminiClient
 import os
 from dotenv import load_dotenv
-
 
 app = FastAPI()
 
@@ -31,11 +28,6 @@ app.add_middleware(
 
 websocket_manager = ClientConnectionManager()
 
-# Load the API key from an environment variable
-load_dotenv()
-gemini_api_key = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
-gemini_client = GeminiClient(gemini_api_key)
-
 
 # User authentication endpoints
 @app.post("/api/users")
@@ -48,8 +40,6 @@ async def create_user(
     if db_user:
         raise _fastapi.HTTPException(status_code=400, detail="Email already in use")
     return await _services.create_user(db, user)
-
-
 
 
 @app.post("/api/token")
@@ -73,6 +63,7 @@ async def get_user(
     """ Endpoint responsible to get the user"""
     return user
 
+
 # Endpoint to create a conversation
 @app.post("/api/create_convo/", response_model=dict)
 async def create_conversation(
@@ -82,7 +73,7 @@ async def create_conversation(
     ):
     """Endpoint used to create a conversation """
     user = await _services.get_current_user(db, token)
-    convo = await _services.create_conversation_service(user,conversation, db)
+    convo = await _services.create_conversation_service(user, conversation, db)
     return {
         "conversation_id":convo.id, 
         'conversation_date_created':convo.date_created ,
@@ -90,8 +81,7 @@ async def create_conversation(
         }
 
 
-#Endpoint to get all conversation user has
-
+# Endpoint to get all conversation user has
 @app.get('/api/convos/{user_id}')
 async def get_user_conversation(
     user_id:int,
@@ -115,6 +105,8 @@ async def get_message_from_conversation(
 
     """ Get all the messages from  conversations"""
     conversation = await _services.get_conversation_by_id(db, room_id)
+
+    gemini_client.set_chat_history(conversation)
 
     if not conversation:
         _fastapi.HTTPException(status_code=404, detail="Conversation not found")
@@ -198,8 +190,15 @@ async def chat_endpoint(
             websocket_manager.disconnect(room_id)
             break
 
-if __name__ == "__main__":
-    import uvicorn
 
+if __name__ == "__main__":
     # Run the server using uvicorn when this script is executed directly
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+    # Load the API key from an environment variable
+    load_dotenv()
+
+    # Create a Gemini client instance
+    gemini_api_key = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
+    gemini_client = GeminiClient(gemini_api_key)
+    gemini_client.set_instructions()

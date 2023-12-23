@@ -25,6 +25,7 @@ oauth2schema = security.OAuth2PasswordBearer(tokenUrl='/api/token')
 def create_database():
     return database.Base.metadata.create_all(bind=database.engine)
 
+
 # Dependency
 def get_db():
     db = database.SessionLocal()
@@ -32,7 +33,8 @@ def get_db():
         yield db
     finally:
         db.close()
- 
+
+
 async def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
@@ -56,7 +58,6 @@ async def create_user(db:Session,user: schemas.UserCreate):
     db.commit()
     db.refresh(user_obj)
     return user_obj
-
 
 
 async def authenticate_user(email: str, password: str, db: _orm.Session):

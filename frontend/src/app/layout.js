@@ -1,7 +1,8 @@
 "use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "@/components/Auth/AuthProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 import Loader from "@/components/common/Loader";
@@ -10,12 +11,36 @@ import Header from "@/components/Header";
 
 const layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
   const [loading, setLoading] = useState(true);
+  const [chats, setChats] = useState([]);
+
+  const { user, token } = useContext(AuthContext);
+  console.log("authContext", token);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
+
+  useEffect(() => {
+    if (user && token) getUserChats();
+  }, [token]);
+
+  async function getUserChats() {
+    console.log("getUserChats", token);
+    try {
+      const response = await fetch(`/api/convos/${user.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const chats = await response.json();
+      setChats(chats);
+      console.log("response", chats);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
@@ -24,7 +49,11 @@ const layout = ({ children }) => {
       ) : (
         <div className="flex h-screen overflow-hidden">
           {/* <!-- ===== Sidebar Start ===== --> */}
-          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <Sidebar
+            chats={chats}
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+          />
           {/* <!-- ===== Sidebar End ===== --> */}
 
           {/* <!-- ===== Content Area Start ===== --> */}

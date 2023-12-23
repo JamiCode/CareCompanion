@@ -27,8 +27,9 @@ class User(database.Base):
 class Conversation(database.Base):
     __tablename__ = "conversations"
 
-    id = sql.Column(sql.String, primary_key=True, default=str(uuid.uuid4()))
-    title = sql.Column(sql.String, nullable=False)  # Title of the conversation
+    id = sql.Column(sql.String, primary_key=True)
+
+    title = sql.Column(sql.String, nullable=False, unique=False)  # Title of the conversation
 
     # Relationship with User (many conversations belong to one user)
     user_id = sql.Column(sql.Integer, sql.ForeignKey("users.id"), nullable=False)
@@ -39,6 +40,12 @@ class Conversation(database.Base):
 
     def __repr__(self) -> str:
         return f"Conversation: {self.title}"
+
+    @classmethod
+    def generate_uuid(cls):
+        generated_uid = str(uuid.uuid4())
+        return generated_uid
+
 
 
 

@@ -2,11 +2,14 @@
 
 import { AuthProvider } from "@/components/Auth/AuthProvider";
 import MainLayout from "@/app/layout";
+import Chat from "@/components/Chat";
 
 const home = () => {
   return (
     <AuthProvider>
-      <MainLayout />
+      <MainLayout>
+        <Chat />
+      </MainLayout>
     </AuthProvider>
   );
 };

@@ -1,9 +1,10 @@
 "use client";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import "./index.css";
 import { mockChats } from "./mock";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/components/Auth/AuthProvider";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const chart = () => {
   const [messages, setMessages] = useState(mockChats);
@@ -35,6 +36,8 @@ const chart = () => {
 
         event.target.value = "";
         setScrollInto(newChat.id);
+
+        handleClickSendMessage(text);
       }
     }
   }
@@ -61,6 +64,35 @@ const chart = () => {
       setScrollInto();
     }
   }, [messages]);
+
+  // Websockets
+  const [socketUrl, setSocketUrl] = useState(
+    `ws://localhost:8000/api/chat/${id}/${authContext.token}`
+  );
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  const handleClickChangeSocketUrl = useCallback(
+    () => setSocketUrl("wss://demos.kaazing.com/echo"),
+    []
+  );
+
+  const handleClickSendMessage = useCallback((text) => sendMessage(text), []);
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: "Connecting",
+    [ReadyState.OPEN]: "Open",
+    [ReadyState.CLOSING]: "Closing",
+    [ReadyState.CLOSED]: "Closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+  }[readyState];
 
   return (
     <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">

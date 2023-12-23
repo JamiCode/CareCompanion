@@ -19,9 +19,12 @@ from gemini_client import GeminiClient
 
 app = FastAPI()
 
+aapp = FastAPI()
+
+# Allow requests from 'http://localhost:3005'
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://your-frontend-domain.com"],
+    allow_origins=["http://localhost:3005"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

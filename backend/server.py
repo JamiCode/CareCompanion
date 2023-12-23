@@ -120,7 +120,7 @@ async def get_message_from_conversation(
     messages = await _services.get_all_messages_from_conversation(db, conversation.id)
     message_payload_schema = [_schemas.MessageSchema(**message.__dict__) for message in messages]
 
-    gemini_client.set_chat_history(messages)
+    gemini_client.set_chat_history(message_payload_schema)
     
     return message_payload_schema
 

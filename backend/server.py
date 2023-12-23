@@ -105,6 +105,7 @@ async def get_message_from_conversation(
 
     """ Get all the messages from  conversations"""
     conversation = await _services.get_conversation_by_id(db, room_id)
+    print(conversation)
 
     gemini_client.set_chat_history(conversation)
 

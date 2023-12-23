@@ -55,4 +55,7 @@ class GeminiClient:
         )
 
         response = self.model.generate_content(self.chat_history)
+
+        self.chat_history.append({'role': 'model', 'parts': [response.text]})
+
         return response.text

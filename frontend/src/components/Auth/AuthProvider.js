@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
       const fetchData = async () => {
         try {
           if (!sessionStorageAccessToken) {
-            console.log("reutrn");
             router.push("/auth");
           } else {
             const response = await fetch("/api/users/me", {

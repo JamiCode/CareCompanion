@@ -34,8 +34,8 @@ const layout = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("response", response);
-      // const chats = response.json();
+      const chats = await response.json();
+      console.log("response", chats);
     } catch (error) {
       console.error(error);
     }

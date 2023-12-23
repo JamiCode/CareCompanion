@@ -18,8 +18,6 @@ from dotenv import load_dotenv
 
 app = FastAPI()
 
-aapp = FastAPI()
-
 # Allow requests from 'http://localhost:3005'
 app.add_middleware(
     CORSMiddleware,

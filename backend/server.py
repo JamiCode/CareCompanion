@@ -13,10 +13,20 @@ import models
 import passlib.hash as _hash
 import websockets
 import json
+from fastapi.middleware.cors import CORSMiddleware
 from gemini_client import GeminiClient
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://your-frontend-domain.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 websocket_manager = ClientConnectionManager()
 
 # Initialize the client with the API key
@@ -111,7 +121,7 @@ async def get_message_from_conversation(
     return message_payload_schema
 
 
-@app.websocket("/chat/{room_id}/{token}")
+@app.websocket("/api/chat/{room_id}/{token}")
 async def chat_endpoint(
     room_id:str,
     token:str,
@@ -182,11 +192,11 @@ async def chat_endpoint(
             websocket_manager.disconnect(room_id)
         
         except Exception as e:
-            print(e)
             websocket_manager.disconnect(room_id)
+            break
 
 if __name__ == "__main__":
     import uvicorn
 
     # Run the server using uvicorn when this script is executed directly
-    uvicorn.run(app, host="127.0.0.1", port=80)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

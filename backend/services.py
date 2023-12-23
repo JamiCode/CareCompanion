@@ -112,6 +112,7 @@ async def create_conversation_service(
     ):
 
         new_conversation = models.Conversation(
+            id=models.Conversation.generate_uuid(),
             title=conversation.title,
             user_id=user.id
         )

@@ -120,7 +120,7 @@ async def get_message_from_conversation(
     messages = await _services.get_all_messages_from_conversation(db, conversation.id)
     message_payload_schema = [_schemas.MessageSchema(**message.__dict__) for message in messages]
 
-    gemini_client.set_chat_history(messages)
+    gemini_client.set_chat_history(message_payload_schema)
     
     return message_payload_schema
 
@@ -202,4 +202,4 @@ async def chat_endpoint(
 
 if __name__ == "__main__":
     # Run the server using uvicorn when this script is executed directly
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=3005)

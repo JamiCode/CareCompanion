@@ -202,4 +202,4 @@ async def chat_endpoint(
 
 if __name__ == "__main__":
     # Run the server using uvicorn when this script is executed directly
-    uvicorn.run(app, host="0.0.0.0", port=3005)
+    uvicorn.run(app, host="0.0.0.0")

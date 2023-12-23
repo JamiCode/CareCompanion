@@ -1,6 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { useRouter } from "next/router";
+
+import { AuthContext } from "@/components/Auth/AuthProvider";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -46,6 +48,8 @@ const DropdownUser = () => {
     }
   };
 
+  const { user, token } = useContext(AuthContext);
+
   return (
     <div className="relative">
       <Link
@@ -56,9 +60,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {user.first_name} {user.last_name}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{user.email}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">

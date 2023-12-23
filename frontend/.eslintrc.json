@@ -6,6 +6,7 @@
     "next/core-web-vitals"
   ],
   "rules": {
-    "react-hooks/rules-of-hooks": 0
+    "react-hooks/rules-of-hooks": 0,
+    "no-console": "error"
   }
 }

@@ -15,7 +15,6 @@ const layout = ({ children }) => {
   const [chats, setChats] = useState([]);
 
   const { user, token } = useContext(AuthContext);
-  console.log("authContext", token);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
@@ -26,7 +25,6 @@ const layout = ({ children }) => {
   }, [token]);
 
   async function getUserChats() {
-    console.log("getUserChats", token);
     try {
       const response = await fetch(`/api/convos/${user.id}`, {
         method: "GET",
@@ -36,7 +34,6 @@ const layout = ({ children }) => {
       });
       const chats = await response.json();
       setChats(chats);
-      console.log("response", chats);
     } catch (error) {
       console.error(error);
     }

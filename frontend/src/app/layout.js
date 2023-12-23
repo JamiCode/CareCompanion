@@ -35,6 +35,7 @@ const layout = ({ children }) => {
         },
       });
       const chats = await response.json();
+      setChats(chats);
       console.log("response", chats);
     } catch (error) {
       console.error(error);

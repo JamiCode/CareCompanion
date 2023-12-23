@@ -1,11 +1,16 @@
+"use client";
+
+import { AuthProvider } from "@/components/Auth/AuthProvider";
 import MainLayout from "@/app/layout";
-import Chart from "@/components/Chat";
+import Chat from "@/components/Chat";
 
 const home = () => {
   return (
-    <MainLayout>
-      <Chart />
-    </MainLayout>
+    <AuthProvider>
+      <MainLayout>
+        <Chat />
+      </MainLayout>
+    </AuthProvider>
   );
 };
 

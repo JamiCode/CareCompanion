@@ -1,6 +1,4 @@
 import google.generativeai as genai
-from dotenv import load_dotenv
-import os
 
 
 def convert_messages_format(message):
@@ -17,7 +15,8 @@ class GeminiClient:
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel('gemini-pro')
         self.instructions = ""
-        # Start the chat session with history if needed
+
+        # Chat session
         self.chat = self.model.start_chat(history=[])
         self.chat_history = []
 
@@ -46,7 +45,7 @@ class GeminiClient:
         :return: The chatbot's response as a text.
         """
         # Prepend instructions to the message
-        full_message = f"{self.instructions}\n\n{message}"
+        full_message = f"{self.instructions}\n{message}"
 
         self.chat_history.append(
             {

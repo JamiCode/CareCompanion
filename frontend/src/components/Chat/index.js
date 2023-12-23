@@ -47,12 +47,10 @@ const chart = () => {
 
     const data = await response.json();
     setMessageHistory(data);
-    console.log("messages:::::", data);
   }
 
   useEffect(() => {
     if (scrollInto) {
-      console.log(scrollInto);
       document
         .getElementById(`message-${scrollInto}`)
         .scrollIntoView({ behavior: "smooth", block: "start" });
@@ -74,15 +72,12 @@ const chart = () => {
 
   useEffect(() => {
     if (lastMessage !== null) {
-      console.log("use effect", JSON.parse(lastMessage.data), messageHistory);
       const message = {
         ...JSON.parse(lastMessage.data),
         id: Date.now(),
       };
-      console.log("new Messag", message);
       setMessageHistory((prev) => prev.concat(message));
       setTimeout(() => {
-        console.log(scrollInto);
         document
           .getElementById(`message-${message.id}`)
           .scrollIntoView({ behavior: "smooth", block: "start" });

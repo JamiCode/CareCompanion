@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
+    const destinationUrl = process.env.API_URL;
+
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:8000/api/:path*",
+        destination: `${destinationUrl}/api/:path*`,
       },
     ];
   },

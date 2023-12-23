@@ -1,11 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import "./index.css";
 import { mockChats } from "./mock";
+import { useRouter } from "next/router";
+import { AuthContext } from "@/components/Auth/AuthProvider";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const chart = () => {
-  const [chats, setChats] = useState(mockChats);
+  const [messages, setMessages] = useState(mockChats);
   const [scrollInto, setScrollInto] = useState();
+
+  const authContext = useContext(AuthContext);
+
+  const router = useRouter();
+  const { id } = router.query;
+  console.log("id", id);
+  useEffect(() => {
+    console.log("mounted", id);
+    getMessages();
+  }, []);
 
   function handleEnter(event) {
     if (event.key === "Enter") {
@@ -14,28 +27,72 @@ const chart = () => {
 
       if (text) {
         const newChat = {
-          id: chats.length,
+          id: messages.length,
           title: text,
           type: "request",
         };
 
-        setChats([...chats, newChat]);
+        setMessages([...messages, newChat]);
 
         event.target.value = "";
         setScrollInto(newChat.id);
+
+        handleClickSendMessage(text);
       }
     }
+  }
+
+  async function getMessages() {
+    const response = await fetch(`/api/chat_history/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authContext.token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+    console.log("messages:::::", data);
   }
 
   useEffect(() => {
     if (scrollInto) {
       console.log(scrollInto);
       document
-        .getElementById(`chat-${scrollInto}`)
+        .getElementById(`message-${scrollInto}`)
         .scrollIntoView({ behavior: "smooth", block: "start" });
       setScrollInto();
     }
-  }, [chats]);
+  }, [messages]);
+
+  // Websockets
+  const [socketUrl, setSocketUrl] = useState(
+    `ws://localhost:8000/api/chat/${id}/${authContext.token}`
+  );
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  const handleClickChangeSocketUrl = useCallback(
+    () => setSocketUrl("wss://demos.kaazing.com/echo"),
+    []
+  );
+
+  const handleClickSendMessage = useCallback((text) => sendMessage(text), []);
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: "Connecting",
+    [ReadyState.OPEN]: "Open",
+    [ReadyState.CLOSING]: "Closing",
+    [ReadyState.CLOSED]: "Closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+  }[readyState];
 
   return (
     <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
@@ -43,13 +100,17 @@ const chart = () => {
         id="messages"
         className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
       >
-        {chats.map((chat) => {
+        {messages.map((message) => {
           return (
-            <div className="chat-message" id={"chat-" + chat.id} key={chat.id}>
+            <div
+              className="chat-message"
+              id={"message-" + message.id}
+              key={message.id}
+            >
               <div
                 className={
                   "flex items-end " +
-                  (chat.type === "request" ? "justify-end" : "")
+                  (message.type === "request" ? "justify-end" : "")
                 }
               >
                 <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
@@ -57,12 +118,12 @@ const chart = () => {
                     <span
                       className={
                         "px-4 py-2 rounded-lg inline-block rounded-bl-none text-gray-600 " +
-                        (chat.type === "request"
+                        (message.type === "request"
                           ? "bg-blue-600"
                           : "bg-gray-300")
                       }
                     >
-                      {chat.title}
+                      {message.title}
                     </span>
                   </div>
                 </div>

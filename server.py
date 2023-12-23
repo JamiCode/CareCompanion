@@ -38,6 +38,11 @@ gemini_client = GeminiClient(gemini_api_key)
 gemini_client.set_instructions()
 
 
+
+
+@app.get('/')
+async def root():
+    return {"Message":"CareCompanion API "}
 # User authentication endpoints
 @app.post("/api/users")
 async def create_user(

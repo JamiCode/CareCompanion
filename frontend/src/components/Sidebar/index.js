@@ -6,7 +6,7 @@ import SidebarLinkGroup from "./SidebarLinkGroup";
 import Image from "next/image";
 import { AuthContext } from "@/components/Auth/AuthProvider";
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, chats }) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen, chats, setChats }) => {
   console.log("chat", chats);
   const pathname = usePathname();
   const { token } = useContext(AuthContext);
@@ -55,24 +55,31 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, chats }) => {
   }, [sidebarExpanded]);
 
   async function addConversation() {
-    console.log("addConversaiont");
     const conversationIndex = chats.length + 1;
 
     try {
-      const response = await fetch("/api/create_convo/", {
+      const title = `conversation-${conversationIndex}`;
+      const response = await fetch("http://localhost:8000/api/create_convo/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify({
-          title: `conversation-${conversationIndex}`,
+          title,
         }),
-        credentials: "include",
       });
 
       const data = await response.json();
-      console.log("data", data);
+
+      if (data) {
+        const createdConversation = {
+          id: data.conversation_id,
+          title,
+        };
+        setChats([...chats, createdConversation]);
+      }
     } catch (error) {
       console.error(error);
     }

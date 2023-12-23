@@ -112,6 +112,7 @@ async def get_message_from_conversation(
 
     """ Get all the messages from  conversations"""
     conversation = await _services.get_conversation_by_id(db, room_id)
+    print(conversation)
 
     if not conversation:
         _fastapi.HTTPException(status_code=404, detail="Conversation not found")

@@ -14,14 +14,17 @@ import passlib.hash as _hash
 import websockets
 import json
 from gemini_client import GeminiClient
+import os
+from dotenv import load_dotenv
 
 
 app = FastAPI()
 websocket_manager = ClientConnectionManager()
 
-# Initialize the client with the API key
-temporary_key = 'AIzaSyCdUu2kedN8CtuJyGiNwkmVzTTc-J8suaI'
-gemini_client = GeminiClient(temporary_key)
+# Load the API key from an environment variable
+load_dotenv()
+gemini_api_key = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
+gemini_client = GeminiClient(gemini_api_key)
 
 
 # User authentication endpoints

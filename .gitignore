@@ -1,8 +1,19 @@
+# Python virtual environments
 virt/
-node_modules/
-__pycache__/
 venv/
-node_modules/
-.next
-.idea/
+__pycache__/
+
+# Database files
 sql_app.db
+
+# Node.js modules
+node_modules/
+
+# IDE settings
+.idea/
+
+# Frontend build directories
+.next/
+
+# Environment variables
+.env

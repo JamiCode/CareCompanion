@@ -49,7 +49,6 @@ const DropdownUser = () => {
   };
 
   const { user, token } = useContext(AuthContext);
-  console.log(":::::::::", user, token);
 
   return (
     <div className="relative">

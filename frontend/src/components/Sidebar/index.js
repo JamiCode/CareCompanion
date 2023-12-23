@@ -7,7 +7,6 @@ import Image from "next/image";
 import { AuthContext } from "@/components/Auth/AuthProvider";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen, chats, setChats }) => {
-  console.log("chat", chats);
   const pathname = usePathname();
   const { token } = useContext(AuthContext);
 

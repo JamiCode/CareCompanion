@@ -60,14 +60,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <Link href="/">
+        {/* <Link href="/">
           <Image
             width={176}
             height={32}
             src={"/images/logo/logo.svg"}
             alt="Logo"
           />
-        </Link>
+        </Link> */}
 
         <button
           ref={trigger}
@@ -99,7 +99,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           {/* <!-- Menu Group --> */}
           <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-              MENU
+              Conversations
             </h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">

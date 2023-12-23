@@ -45,7 +45,6 @@ class GeminiClient:
         :return: The chatbot's response as a text.
         """
         # Prepend instructions to the message
-        return "mock response here"
         full_message = f"{self.instructions}\n{message}"
 
         self.chat_history.append(

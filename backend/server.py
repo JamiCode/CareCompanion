@@ -12,7 +12,7 @@ import websockets
 import json
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from gemini_client import GeminiClient
+from gemini_handler import GeminiClient
 import os
 from dotenv import load_dotenv
 
@@ -28,6 +28,14 @@ app.add_middleware(
 )
 
 websocket_manager = ClientConnectionManager()
+
+# Load the API key from an environment variable
+load_dotenv()
+
+# Create a Gemini client instance
+gemini_api_key = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
+gemini_client = GeminiClient(gemini_api_key)
+gemini_client.set_instructions()
 
 
 # User authentication endpoints
@@ -196,11 +204,3 @@ async def chat_endpoint(
 if __name__ == "__main__":
     # Run the server using uvicorn when this script is executed directly
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-    # Load the API key from an environment variable
-    load_dotenv()
-
-    # Create a Gemini client instance
-    gemini_api_key = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
-    gemini_client = GeminiClient(gemini_api_key)
-    gemini_client.set_instructions()

@@ -204,4 +204,4 @@ if __name__ == "__main__":
     import uvicorn
 
     # Run the server using uvicorn when this script is executed directly
-    uvicorn.run(app, host="0.0.0.0", port=1010,reload=False)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

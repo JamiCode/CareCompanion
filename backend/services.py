@@ -61,6 +61,7 @@ async def create_user(db:Session,user: schemas.UserCreate):
 
 
 async def authenticate_user(email: str, password: str, db: _orm.Session):
+    print('poopiyy')
     user = await get_user_by_email(db=db, email=email)
 
     if not user:

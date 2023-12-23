@@ -7,7 +7,7 @@ import { AuthContext } from "@/components/Auth/AuthProvider";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const chart = () => {
-  const [messages, setMessages] = useState(mockChats);
+  const [messages, setMessages] = useState([]);
   const [scrollInto, setScrollInto] = useState();
 
   const authContext = useContext(AuthContext);
@@ -26,20 +26,10 @@ const chart = () => {
 
   function handleEnter(event) {
     if (event.key === "Enter") {
-      console.log("add", event);
       const text = event.target.value;
 
       if (text) {
-        const newChat = {
-          id: messages.length + 1,
-          title: text_content,
-          type: "request",
-        };
-
-        setMessages([...messages, newChat]);
-
         event.target.value = "";
-        setScrollInto(newChat.id);
 
         handleClickSendMessage(text);
       }
@@ -56,7 +46,7 @@ const chart = () => {
     });
 
     const data = await response.json();
-    setMessages(data);
+    setMessageHistory(data);
     console.log("messages:::::", data);
   }
 
@@ -75,14 +65,29 @@ const chart = () => {
     `ws://localhost:8000/api/chat/${id}/${authContext.token}`;
 
   const [socketUrl, setSocketUrl] = useState(generateSocketUrl());
-
   const [messageHistory, setMessageHistory] = useState([]);
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    onOpen: () => console.log("opened"),
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+    shouldReconnect: (closeEvent) => true,
+  });
 
   useEffect(() => {
     if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage));
+      console.log("use effect", JSON.parse(lastMessage.data), messageHistory);
+      const message = {
+        ...JSON.parse(lastMessage.data),
+        id: Date.now(),
+      };
+      console.log("new Messag", message);
+      setMessageHistory((prev) => prev.concat(message));
+      setTimeout(() => {
+        console.log(scrollInto);
+        document
+          .getElementById(`message-${message.id}`)
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+        setScrollInto();
+      }, 0);
     }
   }, [lastMessage, setMessageHistory]);
 
@@ -107,7 +112,7 @@ const chart = () => {
         id="messages"
         className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
       >
-        {messages.map((message) => {
+        {messageHistory.map((message) => {
           return (
             <div
               className="chat-message"

@@ -51,6 +51,7 @@ const layout = ({ children }) => {
           {/* <!-- ===== Sidebar Start ===== --> */}
           <Sidebar
             chats={chats}
+            setChats={setChats}
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
           />

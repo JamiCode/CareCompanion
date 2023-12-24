@@ -44,13 +44,16 @@ const chart = () => {
     }
   }
   async function getMessages() {
-    const response = await fetch(`/api/chat_history/${id}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${authContext.token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `https://carecompanion-production-a0ae.up.railway.app/api/chat_history/${id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authContext.token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
     setMessageHistory(data);
@@ -67,7 +70,7 @@ const chart = () => {
 
   // Websockets
   const generateSocketUrl = () =>
-    `ws://localhost:8000/api/chat/${id}/${authContext.token}`;
+    `ws://https://carecompanion-production-a0ae.up.railway.app/api/chat/${id}/${authContext.token}`;
 
   const [socketUrl, setSocketUrl] = useState(generateSocketUrl());
   const [messageHistory, setMessageHistory] = useState([]);

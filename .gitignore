@@ -3,8 +3,7 @@ virt/
 venv/
 __pycache__/
 
-# Database files
-sql_app.db
+
 
 # Node.js modules
 node_modules/

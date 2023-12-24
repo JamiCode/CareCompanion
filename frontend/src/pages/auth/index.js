@@ -46,8 +46,8 @@ const auth = () => {
             },
           };
       console.log("fetchObject", fetchObject);
-      const response = await fetch(`/api/${url}`, fetchObject);
-      const response1 = await fetch(
+      // const response = await fetch(`/api/${url}`, fetchObject);
+      const response = await fetch(
         `https://carecompanion-production-a0ae.up.railway.app/api/${url}`,
         fetchObject
       );

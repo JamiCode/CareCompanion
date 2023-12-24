@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }) => {
                 response.status,
                 response.statusText
               );
+              window.location.pathname = "/";
               router.push("/auth");
             }
           }

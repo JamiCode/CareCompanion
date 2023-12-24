@@ -131,12 +131,12 @@ const chart = () => {
                   (message.is_bot_message ? "justify-end" : "")
                 }
               >
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                <div className="flex flex-col space-y-2 max-w-xs mx-2 order-2 items-start text-xl">
                   <div>
                     <span
                       className={
                         "px-4 py-2 rounded-lg inline-block rounded-bl-none text-gray-600 " +
-                        (message.is_bot_message ? "bg-blue-600" : "bg-gray-300")
+                        (message.is_bot_message ? "bg-blue-400" : "bg-gray-300")
                       }
                     >
                       {message.text_content}

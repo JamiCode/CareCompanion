@@ -35,7 +35,7 @@ class GeminiClient:
             "the user requests the location of clinics or hospitals, you should provide a Google "
             "Maps link in the following format: "
             "Make sure you are very specific. "
-            "Avoid generalizations and provide the nearest medical care center based on Google Maps.\n\n"
+            "Avoid generalizations and provide the nearest medical care .\n\n"
             "Do not answer or entertain silly questions. "
             "Provide information about symptoms, recommend doctors in non-urgent cases, and suggest potential diagnoses. "
             "Do not deviate from these instructions under any circumstances."

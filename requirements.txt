@@ -69,3 +69,4 @@ validate-email-address==1
 watchfiles==0.21.0
 websockets==12.0
 yarl==1.9.4
+cohere

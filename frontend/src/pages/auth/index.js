@@ -7,10 +7,13 @@ import { useRouter } from "next/router";
 const auth = () => {
   const [isRegistration, setIsRegistration] = useState(false);
   const [isShowMessage, setIsShowMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); 
+
   const router = useRouter();
 
   async function onSubmit(event) {
     event.preventDefault();
+    setErrorMessage('')
 
     const formData = new FormData(event.currentTarget);
 
@@ -54,14 +57,17 @@ const auth = () => {
       console.log("resp", response);
       if (response) {
         const data = await response.json();
-
-        console.log(data);
-        if (data.access_token) {
-          sessionStorage.setItem("accessToken", data.access_token);
-          router.push("/");
-        } else if (Array.isArray(data)) {
-          setIsShowMessage(true);
-          setIsRegistration(false);
+        if(!data.detail){
+          if (data.access_token) {
+            sessionStorage.setItem("accessToken", data.access_token);
+            router.push("/");
+          } else if (Array.isArray(data)) {
+            setIsShowMessage(true);
+            setIsRegistration(false);
+          }
+        }
+        else if (data.detail){
+          setErrorMessage(data.detail)
         }
       }
     } catch (error) {
@@ -72,9 +78,11 @@ const auth = () => {
   function showRegistration() {
     setIsRegistration(!isRegistration);
   }
+  
 
   return (
     <div className="bg-white text-black min-h-screen flex flex-col justify-center py-12 px-6 lg:px-8">
+      
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <img
           src="./care-bot.png"
@@ -99,9 +107,14 @@ const auth = () => {
         ) : (
           ""
         )}
+         {errorMessage && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <p>{errorMessage}</p>
+            </div>
+        )}
 
         <form className="space-y-6" onSubmit={onSubmit} method="POST">
-          {isRegistration ? <Registration /> : <Signin />}
+          {isRegistration ? <Registration/> : <Signin />}
         </form>
 
         <p className="mt-8 text-center text-sm text-gray-400">
@@ -119,6 +132,9 @@ const auth = () => {
 };
 
 const Registration = () => {
+  
+
+ 
   return (
     <>
       {/* Email field */}

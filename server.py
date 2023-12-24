@@ -23,16 +23,19 @@ from fastapi.security import APIKeyHeader
 
 api_key_header = APIKeyHeader(name="API_KEY")
 app = FastAPI()
+# Define the allowed origins
+origins = [
+    "https://carecompanion-production.up.railway.app"
+]
 
-# Allow requests from 'http://localhost:3005'
+# Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3005"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 websocket_manager = ClientConnectionManager()
 
 # Load the API key from an environment variable

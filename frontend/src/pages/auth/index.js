@@ -51,7 +51,7 @@ const auth = () => {
         `https://carecompanion-production-a0ae.up.railway.app/api/${url}`,
         fetchObject
       );
-      console.log("resp", response1);
+      console.log("resp", response);
       if (response) {
         const data = await response.json();
 

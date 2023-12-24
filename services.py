@@ -25,7 +25,7 @@ import fastapi.security as security
 load_dotenv()
 
 # JWT SECRET client instance
-JWT_SECRET = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
+JWT_SECRET = os.getenv('JWT_SECRET', 'default_key_if_not_set')
 
 
 

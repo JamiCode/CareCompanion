@@ -58,17 +58,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, chats, setChats }) => {
 
     try {
       const title = `conversation-${conversationIndex}`;
-      const response = await fetch("http://localhost:8000/api/create_convo/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          title,
-        }),
-      });
+      const response = await fetch(
+        "https://carecompanion-production-a0ae.up.railway.app/api/create_convo/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            title,
+          }),
+        }
+      );
 
       const data = await response.json();
 

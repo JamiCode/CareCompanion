@@ -24,8 +24,8 @@ const auth = () => {
           "b78d2bde64eb40a1502397de133e73f5848198ee39f1d292461599410fad6f8c",
         "Content-Type": "application/json",
       };
-
       let formDataJson = {};
+      console.log(formDataJson);
       formData.forEach((value, key) => {
         formDataJson[key] = value;
       });
@@ -48,9 +48,13 @@ const auth = () => {
               API_KEY: headers.API_KEY,
             },
           };
-
-      const response = await fetch(`/api/${url}`, fetchObject);
-
+      console.log("fetchObject", fetchObject);
+      // const response = await fetch(`/api/${url}`, fetchObject);
+      const response = await fetch(
+        `https://carecompanion-production-a0ae.up.railway.app/api/${url}`,
+        fetchObject
+      );
+      console.log("resp", response);
       if (response) {
         const data = await response.json();
         if(!data.detail){

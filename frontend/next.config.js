@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
-    const destinationUrl = "https://carecompanion-production.up.railway.app";
+    const destinationUrl =
+      "https://carecompanion-production-a0ae.up.railway.app/";
     console.log("destinationUrl", destinationUrl);
     return [
       {

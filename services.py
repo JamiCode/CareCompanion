@@ -26,6 +26,7 @@ load_dotenv()
 
 # JWT SECRET client instance
 JWT_SECRET = os.getenv('JWT_SECRET', 'default_key_if_not_set')
+oauth2schema = security.OAuth2PasswordBearer(tokenUrl='/api/token')
 
 
 

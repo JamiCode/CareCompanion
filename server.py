@@ -25,7 +25,8 @@ api_key_header = APIKeyHeader(name="API_KEY")
 app = FastAPI()
 # Define the allowed origins
 origins = [
-    "https://carecompanion-production.up.railway.app"
+    # "https://carecompanion-production.up.railway.app"
+    "http://localhost:3005"
 ]
 
 # Configure CORS middleware

@@ -65,13 +65,8 @@ const DropdownUser = () => {
           <span className="block text-xs">{user.email}</span>
         </span>
 
-        <span className="h-12 w-12 rounded-full">
-          <Image
-            width={112}
-            height={112}
-            src={"/images/user/user-01.png"}
-            alt="User"
-          />
+        <span className="h-8 w-8 rounded-full">
+          <Image width={112} height={112} src={"/profile.png"} alt="User" />
         </span>
 
         <svg

@@ -48,7 +48,7 @@ const auth = () => {
       console.log("fetchObject", fetchObject);
       const response = await fetch(`/api/${url}`, fetchObject);
       const response1 = await fetch(
-        `https://carecompanion.netlify.app/${url}`,
+        `https://carecompanion.netlify.app/api/${url}`,
         fetchObject
       );
       console.log("resp", response1);

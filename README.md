@@ -13,7 +13,7 @@
 
 [carecompanion-production.up.railway.app](carecompanion-production.up.railway.app)
 
-### Technologies Used
+### TechStack Used
 - Frontend: JavaScrpt (NextJs, Tailwind)
 - Backend: Python FastAPI
   

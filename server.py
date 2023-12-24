@@ -1,3 +1,5 @@
+import hashlib
+from typing import Optional
 from fastapi import FastAPI
 from fastapi.exceptions import WebSocketException
 from fastapi import WebSocket, WebSocketDisconnect
@@ -15,7 +17,11 @@ import uvicorn
 from gemini_handler import GeminiClient
 import os
 from dotenv import load_dotenv
+from fastapi.security import APIKeyHeader
 
+
+
+api_key_header = APIKeyHeader(name="Register_API_KEY")
 app = FastAPI()
 
 # Allow requests from 'http://localhost:3005'
@@ -44,17 +50,26 @@ gemini_client.set_instructions()
 async def root():
     return {"Message":"CareCompanion API "}
 # User authentication endpoints
+
+
 @app.post("/api/users")
 async def create_user(
-    user:_schemas.UserCreate, 
-    db:_orm.Session = _fastapi.Depends(_services.get_db)
-    ):
+    user: _schemas.UserCreate, 
+    db: _orm.Session = _fastapi.Depends(_services.get_db),
+    register_api_key: Optional[str] = _fastapi.Depends(api_key_header)
+):
     """ Endpoint responsible for creating users"""
+    # Replace "thetechnicalhackers321" with the hashed key
+    hashed_key = hashlib.sha256("thetechnicalhackers321".encode()).hexdigest()
+    if register_api_key != hashed_key:
+        raise _fastapi.HTTPException(status_code=401, detail="Invalid API key")
+
     db_user = await _services.get_user_by_email(db, user.email)
     if db_user:
         raise _fastapi.HTTPException(status_code=400, detail="Email already in use")
-    return await _services.create_user(db, user)
-
+    
+    return {await _services.create_user(db, user)
+}
 
 @app.post("/api/token")
 async def generate_token(

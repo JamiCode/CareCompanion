@@ -10,6 +10,7 @@ const chart = () => {
   const [messages, setMessages] = useState([]);
   const [scrollInto, setScrollInto] = useState();
   const [inputText, setInputText] = useState("");
+  const [isTypingBot, setItTypingBot] = useState(false);
 
   const authContext = useContext(AuthContext);
 
@@ -30,10 +31,18 @@ const chart = () => {
       if (inputText) {
         setInputText("");
         handleClickSendMessage(inputText);
+        setItTypingBot(true);
       }
     }
   }
 
+  function sendClick() {
+    if (inputText) {
+      setInputText("");
+      handleClickSendMessage(inputText);
+      setItTypingBot(true);
+    }
+  }
   async function getMessages() {
     const response = await fetch(`/api/chat_history/${id}`, {
       method: "GET",
@@ -80,6 +89,7 @@ const chart = () => {
           .getElementById(`message-${message.id}`)
           .scrollIntoView({ behavior: "smooth", block: "start" });
         setScrollInto();
+        setItTypingBot(false);
       }, 0);
     }
   }, [lastMessage, setMessageHistory]);
@@ -98,13 +108,6 @@ const chart = () => {
     [ReadyState.CLOSED]: "Closed",
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
-
-  function sendClick() {
-    if (inputText) {
-      handleClickSendMessage(inputText);
-      setInputText("");
-    }
-  }
 
   const handleInputChange = (e) => {
     setInputText(e.target.value);
@@ -149,6 +152,7 @@ const chart = () => {
             </div>
           );
         })}
+        {isTypingBot ? "......." : ""}
       </div>
 
       <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">

@@ -21,13 +21,13 @@ import fastapi.security as security
 
 
 
-JWT_SECRET = "jackal"
 # Load the API key from an environment variable
 load_dotenv()
 
-# Create a Gemini client instance
-JWT_SECRET = os.getenv('JWT_SECRET', 'default_key_if_not_set')
-oauth2schema = security.OAuth2PasswordBearer(tokenUrl='/api/token')
+# JWT SECRET client instance
+JWT_SECRET = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
+
+
 
 
 def create_database():

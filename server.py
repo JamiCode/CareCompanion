@@ -21,7 +21,7 @@ from fastapi.security import APIKeyHeader
 
 
 
-api_key_header = APIKeyHeader(name="API_KEY")
+api_key_header = APIKeyHeader(name="Register_API_KEY")
 app = FastAPI()
 
 # Allow requests from 'http://localhost:3005'
@@ -68,7 +68,8 @@ async def create_user(
     if db_user:
         raise _fastapi.HTTPException(status_code=400, detail="Email already in use")
     
-    return {await _services.create_user(db, user)}
+    return {await _services.create_user(db, user)
+}
 
 @app.post("/api/token")
 async def generate_token(

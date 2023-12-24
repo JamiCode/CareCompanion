@@ -1,7 +1,10 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.exceptions import WebSocketException
 from fastapi import WebSocket
+from gemini_handler import GeminiClient
 import models
 import schemas
 import database
@@ -19,6 +22,11 @@ import fastapi.security as security
 
 
 JWT_SECRET = "jackal"
+# Load the API key from an environment variable
+load_dotenv()
+
+# Create a Gemini client instance
+JWT_SECRET = os.getenv('JWT_SECRET', 'default_key_if_not_set')
 oauth2schema = security.OAuth2PasswordBearer(tokenUrl='/api/token')
 
 

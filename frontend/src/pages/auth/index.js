@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 const auth = () => {
   const [isRegistration, setIsRegistration] = useState(false);
+  const [isShowMessage, setIsShowMessage] = useState(false);
   const router = useRouter();
 
   async function onSubmit(event) {
@@ -21,15 +22,28 @@ const auth = () => {
         "Content-Type": "application/json",
       };
 
+      let formDataJson = {};
+      formData.forEach((value, key) => {
+        formDataJson[key] = value;
+      });
+
+      console.log("formDataJson", formDataJson, JSON.stringify(formDataJson));
+      console.log(formData);
       const fetchObject = isRegistration
         ? {
             method: "POST",
-            body: formData,
-            headers,
+            body: JSON.stringify(formDataJson),
+            headers: {
+              API_KEY: headers.API_KEY,
+              "Content-Type": "application/json",
+            },
           }
         : {
             method: "POST",
             body: formData,
+            headers: {
+              API_KEY: headers.API_KEY,
+            },
           };
 
       const response = await fetch(`/api/${url}`, fetchObject);
@@ -37,9 +51,13 @@ const auth = () => {
       if (response) {
         const data = await response.json();
 
+        console.log(data);
         if (data.access_token) {
           sessionStorage.setItem("accessToken", data.access_token);
           router.push("/");
+        } else if (Array.isArray(data)) {
+          setIsShowMessage(true);
+          setIsRegistration(false);
         }
       }
     } catch (error) {
@@ -65,6 +83,18 @@ const auth = () => {
           <i>CareCompanion ChatBot</i>
         </h1>
         <h2 className="text-2xl font-bold mb-8">Login into your account</h2>
+
+        {isShowMessage ? (
+          <div
+            className="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
+            role="alert"
+          >
+            <p className="font-bold">You created a new user</p>
+            <p className="text-sm">Input data to sign in.</p>
+          </div>
+        ) : (
+          ""
+        )}
 
         <form className="space-y-6" onSubmit={onSubmit} method="POST">
           {isRegistration ? <Registration /> : <Signin />}
@@ -122,7 +152,7 @@ const Registration = () => {
         <div className="mt-2">
           <input
             id="firstName"
-            name="firstName"
+            name="first_name"
             type="text"
             autoComplete="given-name"
             required
@@ -144,7 +174,7 @@ const Registration = () => {
         <div className="mt-2">
           <input
             id="lastName"
-            name="lastName"
+            name="last_name"
             type="text"
             autoComplete="family-name"
             required
@@ -166,7 +196,7 @@ const Registration = () => {
         <div className="mt-2">
           <input
             id="password"
-            name="password"
+            name="hashed_password"
             type="password"
             autoComplete="new-password"
             required

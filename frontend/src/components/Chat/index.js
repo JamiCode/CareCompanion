@@ -9,6 +9,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 const chart = () => {
   const [messages, setMessages] = useState([]);
   const [scrollInto, setScrollInto] = useState();
+  const [inputText, setInputText] = useState("");
 
   const authContext = useContext(AuthContext);
 
@@ -26,12 +27,9 @@ const chart = () => {
 
   function handleEnter(event) {
     if (event.key === "Enter") {
-      const text = event.target.value;
-
-      if (text) {
-        event.target.value = "";
-
-        handleClickSendMessage(text);
+      if (inputText) {
+        setInputText("");
+        handleClickSendMessage(inputText);
       }
     }
   }
@@ -101,8 +99,18 @@ const chart = () => {
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
+  function sendClick() {
+    if (inputText) {
+      handleClickSendMessage(inputText);
+      setInputText("");
+    }
+  }
+
+  const handleInputChange = (e) => {
+    setInputText(e.target.value);
+  };
   return (
-    <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
+    <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-full">
       <div
         id="messages"
         className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
@@ -168,6 +176,8 @@ const chart = () => {
           </span>
 
           <input
+            value={inputText}
+            onChange={handleInputChange}
             type="text"
             placeholder="Write your message!"
             className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
@@ -241,6 +251,7 @@ const chart = () => {
               </svg>
             </button>
             <button
+              onClick={sendClick}
               type="button"
               className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
             >

@@ -56,6 +56,7 @@ async def root():
 async def create_user(
     user: _schemas.UserCreate, 
     db: _orm.Session = _fastapi.Depends(_services.get_db),
+    register_api_key: Optional[str] = _fastapi.Depends(api_key_header)
 ):
     """ Endpoint responsible for creating users"""
     # Replace "thetechnicalhackers321" with the hashed key

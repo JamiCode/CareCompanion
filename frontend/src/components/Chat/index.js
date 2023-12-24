@@ -70,7 +70,7 @@ const chart = () => {
 
   // Websockets
   const generateSocketUrl = () =>
-    `wss://https://carecompanion-production-a0ae.up.railway.app/api/chat/${id}/${authContext.token}`;
+    `wss://carecompanion-production-a0ae.up.railway.app/api/chat/${id}/${authContext.token}`;
 
   const [socketUrl, setSocketUrl] = useState(generateSocketUrl());
   const [messageHistory, setMessageHistory] = useState([]);

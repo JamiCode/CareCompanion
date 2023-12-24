@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
-    const destinationUrl = process.env.API_URL;
+    const destinationUrl = "https://carecompanion-production.up.railway.app";
     console.log("destinationUrl", destinationUrl);
     return [
       {

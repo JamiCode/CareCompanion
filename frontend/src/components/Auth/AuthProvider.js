@@ -26,15 +26,12 @@ export const AuthProvider = ({ children }) => {
           if (!sessionStorageAccessToken) {
             router.push("/auth");
           } else {
-            const response = await fetch(
-              "https://carecompanion-production-a0ae.up.railway.app/api/users/me",
-              {
-                method: "GET",
-                headers: {
-                  Authorization: `Bearer ${sessionStorageAccessToken}`,
-                },
-              }
-            );
+            const response = await fetch(`${process.env.API_URL}/users/me`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${sessionStorageAccessToken}`,
+              },
+            });
             const data = await response.json();
 
             setToken(sessionStorageAccessToken);

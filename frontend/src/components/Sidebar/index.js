@@ -59,20 +59,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, chats, setChats }) => {
 
     try {
       const title = `conversation-${conversationIndex}`;
-      const response = await fetch(
-        "https://carecompanion-production-a0ae.up.railway.app/api/create_convo/",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            title,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.API_URL}/create_convo/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          title,
+        }),
+      });
 
       const data = await response.json();
 
@@ -142,17 +139,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, chats, setChats }) => {
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Conversations --> */}
               {chats.map((chat) => {
-                 const isActive = activeConversation === chat.id;
+                const isActive = activeConversation === chat.id;
 
                 return (
                   <li key={chat.id}>
-                  <Link
-                    href={`/${chat.id}`}
-                    className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    isActive ? 'bg-blue-500 text-white' : '' // Change background color for active conversation
-                    }`}
-                    onClick={() => setActiveConversation(chat.id)} // Set the active conversation ID onClick
-                  >
+                    <Link
+                      href={`/${chat.id}`}
+                      className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                        isActive ? "bg-blue-500 text-white" : "" // Change background color for active conversation
+                      }`}
+                      onClick={() => setActiveConversation(chat.id)} // Set the active conversation ID onClick
+                    >
                       <svg
                         className="fill-current"
                         width="18"

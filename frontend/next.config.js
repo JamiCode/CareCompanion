@@ -9,7 +9,7 @@ const nextConfig = {
     //   removeConsole: process.env.NODE_ENV === "production",
     // };
 
-    console.log("h", process.env.API_URL);
+    console.log("h", process.env.API_URL_PROD);
     const destinationUrl =
       process.env.NODE_ENV === "development"
         ? process.env.API_URL_DEV

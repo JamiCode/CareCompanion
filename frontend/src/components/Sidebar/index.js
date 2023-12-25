@@ -12,6 +12,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, chats, setChats }) => {
 
   const trigger = useRef(null);
   const sidebar = useRef(null);
+  const [activeConversation, setActiveConversation] = useState(null); // State to store the active conversation ID
 
   let storedSidebarExpanded = "true";
   const [sidebarExpanded, setSidebarExpanded] = useState(
@@ -141,15 +142,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, chats, setChats }) => {
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Conversations --> */}
               {chats.map((chat) => {
+                 const isActive = activeConversation === chat.id;
+
                 return (
                   <li key={chat.id}>
-                    <Link
-                      href={`/${chat.id}`}
-                      className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                        pathname.includes("calendar") &&
-                        "bg-graydark dark:bg-meta-4"
-                      }`}
-                    >
+                  <Link
+                    href={`/${chat.id}`}
+                    className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    isActive ? 'bg-blue-500 text-white' : '' // Change background color for active conversation
+                    }`}
+                    onClick={() => setActiveConversation(chat.id)} // Set the active conversation ID onClick
+                  >
                       <svg
                         className="fill-current"
                         width="18"

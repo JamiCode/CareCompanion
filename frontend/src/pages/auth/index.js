@@ -19,9 +19,9 @@ const auth = () => {
 
     const url = isRegistration ? "users" : "token";
     try {
+      console.log(process.env.API_KEY);
       const headers = {
-        API_KEY:
-          "b78d2bde64eb40a1502397de133e73f5848198ee39f1d292461599410fad6f8c",
+        API_KEY: process.env.API_KEY,
         "Content-Type": "application/json",
       };
       let formDataJson = {};
@@ -49,7 +49,8 @@ const auth = () => {
       console.log("fetchObject", fetchObject);
       // const response = await fetch(`/api/${url}`, fetchObject);
       const response = await fetch(
-        `https://carecompanion-production-a0ae.up.railway.app/api/${url}`,
+        // `https://carecompanion-production-a0ae.up.railway.app/api/${url}`,
+        `/api/${url}`,
         fetchObject
       );
       console.log("resp", response);

@@ -1,4 +1,3 @@
-
 ### Frontend
 
 ## Dev
@@ -14,16 +13,16 @@
 [carecompanion-production.up.railway.app](carecompanion-production.up.railway.app)
 
 ### TechStack Used
+
 - Frontend: JavaScrpt (NextJs, Tailwind)
 - Backend: Python FastAPI
-  
 
-`uvicorn server: app --reload`
+`uvicorn server:app --reload`
 
 # CareCompanion Repository
 
--  This chatbot is developed as a project for the ChatHack hackathon at LabLab.me
--  🏥🤖 The web app aims to develop a medical chatbot that assists users in identifying health issues, providing guidance, and suggesting suitable healthcare options.
+- This chatbot is developed as a project for the ChatHack hackathon at LabLab.me
+- 🏥🤖 The web app aims to develop a medical chatbot that assists users in identifying health issues, providing guidance, and suggesting suitable healthcare options.
 
 # 🚀 Key Features:
 

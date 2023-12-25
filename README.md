@@ -7,7 +7,7 @@
 
 `.env.local` should be set. Choose from `.env.local.example`
 
-[carecompanionbot.netlify.app](https://carecompanion.netlify.app/)
+[carecompanionbot.netlify.app](https://carecompanionbot.netlify.app/)
 
 ### Backend
 

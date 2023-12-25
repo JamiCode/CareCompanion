@@ -162,7 +162,7 @@ async def chat_endpoint(
     if not conversation:
         await websocket.send_json({"message":'conversation does not exist'})
     await websocket_manager.connect(room_id, websocket)
-
+    gemini_bot_error  = False
     while True:
         try:
             # Receive JSON data containing the message payload
@@ -179,14 +179,19 @@ async def chat_endpoint(
                 response = gemini_client.get_response(user_input)
             except Exception as api_error:
                 print(f"Gemini API error: {api_error}")
-                # Handle API error (e.g., send a message back, log, etc.)
-                continue
+                gemini_bot_error = True
 
             # Send the AI's response back to the client via WebSocket
-            bot_response = {
-                "text_content": response,
-                "is_bot_message": True,
-            }
+            if not gemini_bot_error:
+                bot_response = {
+                    "text_content": response,
+                    "is_bot_message": True,
+                }
+            else:
+                bot_response = {
+                    'text_content':'Reached request limit, wait for some time',
+                    "is_bot_messae":True
+                }
             await websocket_conn.send_json(bot_response)
 
             new_message = models.Message(

@@ -26,15 +26,12 @@ const layout = ({ children }) => {
 
   async function getUserChats() {
     try {
-      const response = await fetch(
-        `https://carecompanion-production-a0ae.up.railway.app/api/convos/${user.id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${process.env.API_URL}/convos/${user.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const chats = await response.json();
       setChats(chats);
     } catch (error) {

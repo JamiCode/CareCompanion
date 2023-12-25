@@ -56,9 +56,13 @@ class GeminiClient:
                 'parts': [full_message]
             }
         )
-
-        response = self.model.generate_content(self.chat_history)
-
-        self.chat_history.append({'role': 'model', 'parts': [response.text]})
+        try:
+            # Generate a response
+            response = self.model.generate_content(self.chat_history)
+            self.chat_history.append({'role': 'model', 'parts': [response.text]})
+        except Exception as e:
+            # Remove the last item (user's question) from chat history on error and return the error message
+            self.chat_history.pop()
+            response = f'{type(e).__name__}: {e}'
 
         return response.text

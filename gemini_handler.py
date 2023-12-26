@@ -101,6 +101,4 @@ class GeminiClient:
             self.chat_history.pop()
             response = f'{type(e).__name__}: {e}'
 
-        print(response)
-
         return response.text

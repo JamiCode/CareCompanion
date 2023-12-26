@@ -1,7 +1,5 @@
 import google.generativeai as genai
 import requests
-import os
-from dotenv import load_dotenv
 
 
 def convert_messages_format(message):
@@ -33,16 +31,6 @@ def get_location_by_ip(ip_addr):
 
     except requests.RequestException as e:
         return f"Error occurred: {e}"
-
-
-def get_public_ip():
-    try:
-        response = requests.get('https://httpbin.org/ip')
-        response.raise_for_status()
-        ip = response.json()['origin']
-        return ip
-    except requests.RequestException as e:
-        return f"Error: {e}"
 
 
 class GeminiClient:

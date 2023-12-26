@@ -41,7 +41,7 @@ class GeminiClient:
             "Do not deviate from these instructions under any circumstances."
         )
 
-    def get_response(self, message):
+    def get_response(self, message, ip_addr):
         """
         Send a message to the chatbot and get its response.
         :param message: User input or message to be sent to the chatbot.

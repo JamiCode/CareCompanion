@@ -157,6 +157,8 @@ async def chat_endpoint(
     db:_orm.Session = _fastapi.Depends(_services.get_db)
     ):
     await websocket.accept()
+    client_ip = websocket.client.host
+    print(f"New connection from IP: {client_ip}")
     user = await _services.verify_socket_connection(token, db=db)
     conversation = await _services.check_conversation_exists(db, room_id)
     if not conversation:
@@ -174,7 +176,7 @@ async def chat_endpoint(
             })
 
             # Get the response from the Gemini API
-            response = gemini_client.get_response(user_input)
+            response = gemini_client.get_response(user_input, client_ip)
             
             # Send the AI's response back to the client via WebSocket
             bot_response = {

@@ -26,7 +26,7 @@ app = FastAPI()
 # Define the allowed origins
 origins = [
    'https://carecompanionbot.netlify.app',
-   'https://carecompanion.netlify.app'
+   'https://carecompanion.netlify.app',
 ]
 
 
@@ -126,7 +126,28 @@ async def get_user_conversation(
         raise  _fastapi.HTTPException(status_code=404, detail="Conversation not found")
     return user_conversations
 
+#Endpoint to delete a conversation a user has
+@app.delete('/convos/{room_id}')
+async def delete_conversation(
+    room_id:str,
+    db:_orm.Session = _fastapi.Depends(_services.get_db),
+    token: str = _fastapi.Depends(_services.authenticate_token)
+):  
+    conversation = await _services.get_conversation_by_id(db, room_id)
+    # Check if the conversation exists
+    if not conversation:
+        raise _fastapi.HTTPException(status_code=404, detail="Conversation not found")
+    try :
+        #delete the conversation in database
+        db.delete(conversation)
+        db.commit()
+        return {'Message': "Conversation Deleted Sucessfully"}
+    except Exception as e:
+        raise _fastapi.HTTPException(status_code=500, detail=f"Fail to delete conversation {str(e)}")
 
+
+
+#Endpoint to get all messages from a conversation
 @app.get('/api/chat_history/{room_id}')
 async def get_messages_from_conversation(
     room_id:str,
@@ -145,6 +166,8 @@ async def get_messages_from_conversation(
     gemini_client.set_chat_history(message_payload_schema)
     
     return message_payload_schema
+
+
 
 
 @app.websocket("/api/chat/{room_id}/{token}")

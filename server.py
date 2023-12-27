@@ -45,9 +45,6 @@ load_dotenv()
 # Create a Gemini client instance
 gemini_api_key = os.getenv('GEMINI_API_KEY', 'default_key_if_not_set')
 gemini_client = GeminiClient(gemini_api_key)
-gemini_client.set_instructions()
-
-
 
 
 @app.get('/')
@@ -176,7 +173,8 @@ async def chat_endpoint(
             })
 
             # Get the response from the Gemini API
-            response = gemini_client.get_response(user_input, client_ip)
+            gemini_client.set_location(client_ip)
+            response = gemini_client.get_response(user_input)
             
             # Send the AI's response back to the client via WebSocket
             bot_response = {

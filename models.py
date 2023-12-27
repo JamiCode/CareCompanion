@@ -1,7 +1,7 @@
 import datetime as dt
 import sqlalchemy as sql
 import passlib.hash as hash
-import database as database  # Your database configuration or import Base from SQLAlchemy
+import database as database  # Database Configuration
 import uuid
 
 class User(database.Base):
@@ -13,7 +13,7 @@ class User(database.Base):
     last_name = sql.Column(sql.String)  
     hashed_password = sql.Column(sql.String)
     date_created = sql.Column(sql.DateTime, default=dt.datetime.utcnow)
-    profile_picture = sql.Column(sql.String)  # Adjust the type as needed
+    profile_picture = sql.Column(sql.String)  
     
     # Relationship with Conversation (one user can have multiple conversations)
     conversations = sql.orm.relationship("Conversation", back_populates="user")
@@ -47,8 +47,6 @@ class Conversation(database.Base):
         return generated_uid
 
 
-
-
 class Message(database.Base):
     __tablename__ = "messages"
 
@@ -67,4 +65,3 @@ class Message(database.Base):
 
     def __repr__(self) -> str:
         return f"Message: {self.text}"
-

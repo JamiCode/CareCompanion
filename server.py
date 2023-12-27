@@ -128,7 +128,7 @@ async def get_user_conversation(
 
 
 @app.get('/api/chat_history/{room_id}')
-async def get_message_from_conversation(
+async def get_messages_from_conversation(
     room_id:str,
     db: _orm.Session = _fastapi.Depends(_services.get_db),
     token: str = _fastapi.Depends(_services.authenticate_token),

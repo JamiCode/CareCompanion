@@ -127,7 +127,7 @@ async def get_user_conversation(
     return user_conversations
 
 #Endpoint to delete a conversation a user has
-@app.delete('/convos/{room_id}')
+@app.delete('/api/delete_convos/{room_id}')
 async def delete_conversation(
     room_id:str,
     db:_orm.Session = _fastapi.Depends(_services.get_db),

@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:react-hooks/recommended",
+    "next/babel",
+    "next/core-web-vitals"
+  ],
+  "rules": {
+    "react-hooks/rules-of-hooks": 0,
+    "no-console": "error"
+  }
+}

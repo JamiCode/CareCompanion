@@ -1,1 +1,19 @@
-node_modules
+# Python virtual environments
+virt/
+venv/
+__pycache__/
+
+
+
+# Node.js modules
+node_modules/
+
+# IDE settings
+.idea/
+
+# Frontend build directories
+.next/
+
+# Environment variables
+.env
+.env.local

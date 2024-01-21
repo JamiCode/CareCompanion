@@ -6,11 +6,10 @@
 
 `.env.local` should be set. Choose from `.env.local.example`
 
-[carecompanion.netlify.app](https://carecompanion.netlify.app/)
+- Status : Completed
+- Deployement Status : Removed from Deployment
 
-### Backend
 
-[carecompanion-production.up.railway.app](carecompanion-production.up.railway.app)
 
 ### TechStack Used
 
